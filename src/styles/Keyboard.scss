@@ -1,0 +1,5 @@
+.Keyboard {
+  .Keyboard__line-1 {
+    @include transform(translateX(15px));
+  }
+}

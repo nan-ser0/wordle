@@ -1,0 +1,93 @@
+//* CSS PREFIX MIXINS
+
+//* mixins SASS
+@mixin transition($property...) {
+    -webkit-transition: $property;
+    -moz-transition: $property;
+    -ms-transition: $property;
+    transition: $property;
+}
+
+@mixin transform($property) {
+    -webkit-transform: $property;
+    -moz-transform: $property;
+    -ms-transform: $property;
+    transform: $property;
+}
+
+@mixin transform-origin($property) {
+    -webkit-transform-origin: $property;
+    -moz-transform-origin: $property;
+    -ms-transform-origin: $property;
+    transform-origin: $property;
+}
+
+@mixin user-select($property) {
+    -webkit-user-select: $property;
+    -moz-user-select: $property;
+    -ms-user-select: $property;
+    user-select: $property;
+}
+
+
+@mixin breakpoint($class) {
+
+    @if $class==xs {
+        @media (max-width: 375px) {
+            @content;
+        }
+    }
+
+    @if $class==h-xs {
+        @media (max-height: 475px) {
+            @content;
+        }
+    }
+
+    @if $class==s {
+        @media (max-width: 576px) {
+            @content;
+        }
+    }
+
+    @if $class==h-s {
+        @media (max-height: 576px) {
+            @content;
+        }
+    }
+
+    @if $class==sm {
+        @media (max-width: 768px) {
+            @content;
+        }
+    }
+
+    @if $class==m {
+        @media (max-width: 1024px) {
+            @content;
+        }
+    }
+
+    @else if $class==lg {
+        @media (max-width: 1365px) {
+            @content;
+        }
+    }
+
+    @else {
+        @warn "Breakpoint mixin supports: xs, sm, md, lg";
+    }
+}
+
+
+//* GRID SYSTEM
+@mixin grid-system {
+  width: 100%;
+  display: grid;
+  grid-template-columns: [first-col] auto [col1] 896px [col2] auto [end-col];
+  grid-template-areas: ". wrapper .";
+
+  @include breakpoint(lg) {
+    grid-template-columns: [first-col] auto [col1] 90% [col2] auto [end-col];
+  }
+}
