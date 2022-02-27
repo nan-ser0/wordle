@@ -1,4 +1,5 @@
 import React from "react";
+import Card from './Card';
 
 class Gameboard extends React.Component<any, any> {
   constructor(props: any) {
@@ -11,7 +12,7 @@ class Gameboard extends React.Component<any, any> {
   static getDerivedStateFromProps(props: any) {
     return {
       word: [...props.word,...Array(25 - props.word.length)].map( (char, index) => {
-        let state = 'bg-gray'; //char ? `bg-state-${char.state}` : `bg-gray`;
+        let state = 'bg-gray';
         if(char) {
           switch (char.state) {
             case 0:
@@ -27,15 +28,9 @@ class Gameboard extends React.Component<any, any> {
               break;
           }
         }
-        return <div key={index} className={`w-[75px] h-[75px] flex justify-center items-center rounded dark:bg-d-gray transition duration-500 ${state}`}>
-          <span className="text-4xl text-white font-extrabold">{char ? char.value: ''}</span>
-        </div>
+        return <Card key={index} classType={state} char={char ? char.value: ''} />
       })
     }
-  }
-
-  createWord() {
-
   }
 
   render() {
