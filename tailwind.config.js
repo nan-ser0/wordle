@@ -6,7 +6,7 @@ module.exports = {
   theme: {
     extend:{
       width: {
-        'full': '638px'
+        'full-custom': '638px'
       },
       colors: {
         'gray-lighter': '#F9F9F9',
