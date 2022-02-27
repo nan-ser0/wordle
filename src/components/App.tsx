@@ -11,8 +11,9 @@ import Modal from "./Modal";
 class App extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
+
     this.state = {
-      charsInWord: 5,
+      charsInWord: 5, //* se puede cambiar entre un valor de 2 a 6
       words: [],
       usedWords: [],
       wordInGame: [],
@@ -31,6 +32,7 @@ class App extends React.Component<any, any> {
       showModal: false,
       showStatistics: false,
     };
+
     this.keyPress = this.keyPress.bind(this);
     this.keyboardGen = this.keyboardGen.bind(this);
     this.compareWords = this.compareWords.bind(this);
@@ -42,6 +44,7 @@ class App extends React.Component<any, any> {
 
   private timer: any;
   private maxTime: number = 300;
+  private actualWord: string = "";
 
   componentDidMount() {
     if (localStorage.length <= 0) {
@@ -98,15 +101,20 @@ class App extends React.Component<any, any> {
     localStorage.getItem("games");
     localStorage.setItem("victories", "0");
     localStorage.getItem("victories");
+    localStorage.setItem("usedwords", "aaaaa");
+    localStorage.getItem("usedwords");
     this.syncData();
   }
 
   syncData() {
     const games = localStorage.getItem("games");
     const victories = localStorage.getItem("victories");
+    const usedWords = localStorage.getItem("usedwords")?.split(",");
+    console.log(usedWords);
     this.setState({
       games: games !== null ? parseInt(games) : 0,
       victories: victories !== null ? parseInt(victories) : 0,
+      usedWords: usedWords,
     });
   }
 
@@ -160,8 +168,9 @@ class App extends React.Component<any, any> {
         return this.selectWord();
       }
     } else {
+      this.actualWord = word;
       this.setState({
-        usedWords: [...this.state.usedWords, word],
+        usedWords: [...this.state.usedWords, this.actualWord],
       });
       return word;
     }
@@ -209,6 +218,10 @@ class App extends React.Component<any, any> {
 
   win() {
     document.removeEventListener("keypress", this.keyPress);
+    localStorage.setItem(
+      "usedwords",
+      [...this.state.usedWords].toString()
+    );
     localStorage.setItem(
       "victories",
       JSON.stringify(parseInt(this.state.victories) + 1)
@@ -316,7 +329,6 @@ class App extends React.Component<any, any> {
             DEVELOPMENT STATISTICS
           </h2>
           Time: {this.state.time}s<br></br>
-          Used words: {this.state.usedWords}
           <br></br>
           Selected word: {this.state.wordInGame}
           <br></br>
