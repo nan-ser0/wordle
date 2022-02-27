@@ -110,7 +110,7 @@ class Modal extends React.Component<any, any> {
       );
     }
     return (
-      <div className="Modal fixed w-full h-fit bg-white inset-1/2 rounded-2xl p-10 translate-y-[-50%] translate-x-[-50%] dark:bg-d-gray-darker">
+      <div className="Modal fixed w-full-custom h-fit bg-white inset-1/2 rounded-2xl p-10 translate-y-[-50%] translate-x-[-50%] dark:bg-d-gray-darker">
         {modal}
       </div>
     );
