@@ -16,6 +16,9 @@ module.exports = {
         'd-gray-lighter': '#565F7E',
         'd-gray': '#2b3041',
         'd-gray-darker': '#262B3C',
+        'state-0': '#D3D6DA',
+        'state-1': '#CEB02C',
+        'state-2': '#66A060'
       },
     },
   },
