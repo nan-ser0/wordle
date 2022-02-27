@@ -12,10 +12,13 @@ class App extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
+      charsInWord: 5,
       words: [],
+      usedWords: [],
       wordInGame: [],
       wordToCompare: [],
       wordsW: [],
+      time: 0,
       hits: 0,
       lifes: 5,
       games: 0,
@@ -28,20 +31,27 @@ class App extends React.Component<any, any> {
       showModal: false,
       showStatistics: false,
     };
+    this.keyPress = this.keyPress.bind(this);
     this.keyboardGen = this.keyboardGen.bind(this);
     this.compareWords = this.compareWords.bind(this);
+    this.play = this.play.bind(this);
     this.showModal = this.showModal.bind(this);
-    this.showDevelopmentModal = this.showDevelopmentModal.bind(this)
+    this.showDevelopmentModal = this.showDevelopmentModal.bind(this);
+    this.clearStorage = this.clearStorage.bind(this);
   }
 
+  private timer: any;
+  private maxTime: number = 300;
+
   componentDidMount() {
-    // localStorage.clear()
     if (localStorage.length <= 0) {
       this.populateStorage();
       this.showModal(false);
     } else {
       this.syncData();
     }
+
+    this.timer = setInterval(() => this.tick(), 1000);
 
     //! La url suministrada tiene una respuesta de tipo 'opaque', por lo que no es posible acceder al body
     //! el contenido de la url es guardada localmente en public/data/words.txt
@@ -50,19 +60,37 @@ class App extends React.Component<any, any> {
         return response.text();
       })
       .then((data) => {
-        this.setState({
-          //* creación de array con las palabras que tienen 5 caracteres
-          words: data.split("\n").filter((word) => {
-            return word.length === 5;
-          }),
-          dataIsLoaded: true,
-          keys: this.keyboardGen(),
+        //* creación de array con las palabras que tienen 5 caracteres
+        const dataT = data.split("\n").filter((word) => {
+          return word.length === this.state.charsInWord;
         });
-        this.play();
+        if (dataT.length <= 0) {
+          console.log("no hay palabras!");
+        } else {
+          this.setState({
+            words: dataT,
+            dataIsLoaded: true,
+            keys: this.keyboardGen(),
+          });
+          this.play();
+        }
       })
       .catch((error) => {
         console.log("getting data error! ", error);
       });
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+
+  tick() {
+    if (this.state.time >= this.maxTime) {
+      this.play();
+    }
+    this.setState({
+      time: this.state.time + 1,
+    });
   }
 
   populateStorage() {
@@ -82,21 +110,61 @@ class App extends React.Component<any, any> {
     });
   }
 
+  clearStorage() {
+    localStorage.clear();
+    window.location.reload();
+  }
+
+  keyPress(e: any) {
+    let charCode = e.which ? e.which : e.keyCode;
+    if (
+      (charCode < 65 || charCode > 90) &&
+      (charCode < 97 || charCode > 122) &&
+      charCode !== 241 &&
+      charCode !== 209
+    ) {
+      return false;
+    }
+    this.compareWords(String.fromCharCode(charCode).toUpperCase());
+  }
+
   play() {
-    const rdm = Math.floor(Math.random() * (this.state.words.length - 1));
+    document.removeEventListener("keypress", this.keyPress);
+    document.addEventListener("keypress", this.keyPress);
+    const selectedWord = this.selectWord();
     this.setState({
-      wordInGame: this.state.words[rdm]
-        .normalize("NFD")
-        .replace(/\p{Diacritic}/gu, "")
-        .toUpperCase()
-        .split(""),
+      wordInGame: selectedWord.split(""),
       wordToCompare: [],
       wordsW: [],
+      time: 0,
       hits: 0,
-      lifes: 5,
+      lifes: this.state.charsInWord,
       win: false,
       gameOver: false,
     });
+  }
+
+  selectWord(): any {
+    const rdm = Math.floor(Math.random() * (this.state.words.length - 1));
+    const word = this.state.words[rdm]
+      .normalize("NFD")
+      .replace(/\p{Diacritic}/gu, "")
+      .toUpperCase();
+    const wordExists = this.state.usedWords.filter((w: string) => {
+      return w === word;
+    });
+    if (wordExists.length > 0) {
+      if (this.state.usedWords.lenght === this.state.words.lenght) {
+        console.log("no hay mas palabras nuevas");
+      } else {
+        return this.selectWord();
+      }
+    } else {
+      this.setState({
+        usedWords: [...this.state.usedWords, word],
+      });
+      return word;
+    }
   }
 
   compareWords(char: string) {
@@ -121,17 +189,17 @@ class App extends React.Component<any, any> {
       }
     }
 
-    if (this.state.wordToCompare.length < 4) {
+    if (this.state.wordToCompare.length < this.state.charsInWord - 1) {
       this.setState({
         wordToCompare: [...this.state.wordToCompare, charObj],
         wordsW: [...this.state.wordsW, charObj],
       });
-    } else if (this.state.wordToCompare.length === 4) {
+    } else if (this.state.wordToCompare.length === this.state.charsInWord - 1) {
       this.setState({
         wordToCompare: [...this.state.wordToCompare, charObj],
         wordsW: [...this.state.wordsW, charObj],
       });
-      if (this.state.hits >= 4 && charObj.state === 2) {
+      if (this.state.hits >= this.state.charsInWord && charObj.state === 2) {
         this.win();
       } else {
         this.lose();
@@ -140,6 +208,7 @@ class App extends React.Component<any, any> {
   }
 
   win() {
+    document.removeEventListener("keypress", this.keyPress);
     localStorage.setItem(
       "victories",
       JSON.stringify(parseInt(this.state.victories) + 1)
@@ -162,7 +231,8 @@ class App extends React.Component<any, any> {
       lifes: this.state.lifes - 1,
       win: false,
     });
-    if (this.state.lifes - 1 <= 0) {
+    if (this.state.lifes <= 0) {
+      document.removeEventListener("keypress", this.keyPress);
       localStorage.setItem(
         "games",
         JSON.stringify(parseInt(this.state.games) + 1)
@@ -179,12 +249,6 @@ class App extends React.Component<any, any> {
       hits: 0,
     });
   }
-
-  // restart() {
-  //   this.setState({
-  //     wordInGame:
-  //   });
-  // }
 
   keyboardGen(): any {
     const qwerty = [
@@ -218,8 +282,8 @@ class App extends React.Component<any, any> {
 
   showDevelopmentModal() {
     this.setState({
-      developShow: !this.state.developShow
-    })
+      developShow: !this.state.developShow,
+    });
   }
 
   render() {
@@ -248,7 +312,12 @@ class App extends React.Component<any, any> {
     if (this.state.developShow) {
       developmentModal = (
         <div className="fixed inset-5 w-fit h-fit text-dark bg-gray p-5 rounded-2xl">
-          <h2 className="text-2xl font-semibold">DEVELOPMENT STATISTICS</h2>
+          <h2 className="text-2xl font-semibold mb-6">
+            DEVELOPMENT STATISTICS
+          </h2>
+          Time: {this.state.time}s<br></br>
+          Used words: {this.state.usedWords}
+          <br></br>
           Selected word: {this.state.wordInGame}
           <br></br>
           Word to compare:{" "}
@@ -267,6 +336,20 @@ class App extends React.Component<any, any> {
           win? {this.state.win ? "yes" : "no"}
           <br></br>
           gameOver? {this.state.gameOver ? "yes" : "no"}
+          <br></br>
+          <button
+            onClick={this.clearStorage}
+            className="bg-state-1 text-white p-2 mt-4 rounded hover:bg-state-1/80 animation duration-500"
+          >
+            Clear Storage & restart
+          </button>
+          <br></br>
+          <button
+            onClick={this.play}
+            className="bg-state-2 text-white p-2 mt-4 rounded hover:bg-state-2/80 animation duration-500"
+          >
+            Start game
+          </button>
         </div>
       );
     }
@@ -327,11 +410,14 @@ class App extends React.Component<any, any> {
               </div>
             </div>
           </Header>
-          <Gameboard word={this.state.wordsW} />
+          <Gameboard word={this.state.wordsW} size={this.state.charsInWord} />
           <Keyboard>{this.state.keys}</Keyboard>
         </div>
         {modal}
-        <div onClick={this.showDevelopmentModal} className="fixed inset-0 bg-dark w-[16px] h-[16px] cursor-pointer"></div>
+        <div
+          onClick={this.showDevelopmentModal}
+          className="fixed inset-0 bg-dark w-[16px] h-[16px] cursor-pointer"
+        ></div>
         {developmentModal}
       </>
     );
