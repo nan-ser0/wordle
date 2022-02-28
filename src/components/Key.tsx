@@ -7,7 +7,7 @@ class Key extends React.Component<any, any> {
   }
 
   getChar() {
-    this.props.onClick(this.props.label)
+    this.props.onClick(this.props.label, 1)
   }
 
   render() {
