@@ -133,7 +133,7 @@ class App extends React.Component<any, any> {
     ) {
       return false;
     }
-    this.compareWords(String.fromCharCode(charCode).toUpperCase());
+    this.compareWords(String.fromCharCode(charCode).toUpperCase(), 0);
   }
 
   play() {
@@ -176,7 +176,7 @@ class App extends React.Component<any, any> {
     }
   }
 
-  compareWords(char: string) {
+  compareWords(char: string, offset: number) {
     const correctChart = this.state.wordInGame[this.state.wordToCompare.length];
     const charObj = {
       value: char,
@@ -208,7 +208,7 @@ class App extends React.Component<any, any> {
         wordToCompare: [...this.state.wordToCompare, charObj],
         wordsW: [...this.state.wordsW, charObj],
       });
-      if (this.state.hits + 1 >= this.state.charsInWord && charObj.state === 2) {
+      if (this.state.hits + offset >= this.state.charsInWord && charObj.state === 2) {
         this.win();
       } else {
         this.lose();
