@@ -88,7 +88,7 @@ class Modal extends React.Component<any, any> {
           <h2 className="Modal__instructions-title uppercase font-extrabold text-4xl text-dark dark:text-white  mb-7">
             Cómo Jugar
           </h2>
-          <div className="Modal__instructions-content text-dark dark:text-white">
+          <div className="Modal__instructions-content text-xs lg:text-base text-dark dark:text-white">
             <p>Adivina la palabra oculta en cinco intentos.</p>
             <p>Cada intento debe ser una palabra Válida de 5 letras.</p>
             <p>
@@ -96,7 +96,7 @@ class Modal extends React.Component<any, any> {
               que tan cerca estás de acertar la palabra.
             </p>
           </div>
-          <div className="Modal__instructions-example text-dark dark:text-white">
+          <div className="Modal__instructions-example text-xs lg:text-base text-dark dark:text-white">
             <h3 className="my-5 font-semibold text-xl">Ejemplos</h3>
             <div className="flex flex-row justify-center space-x-3">
               {this.buildWorld("GATOS", 0, 2)}
@@ -129,7 +129,7 @@ class Modal extends React.Component<any, any> {
       );
     }
     return (
-      <div className="Modal fixed w-full-custom h-fit bg-white inset-1/2 rounded-2xl p-10 translate-y-[-50%] translate-x-[-50%] dark:bg-d-gray-darker">
+      <div className="Modal fixed w-full h-full lg:w-full-custom lg:h-fit bg-white inset-1/2 rounded-2xl p-10 translate-y-[-50%] translate-x-[-50%] dark:bg-d-gray-darker">
         {modal}
       </div>
     );
