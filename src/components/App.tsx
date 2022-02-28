@@ -208,7 +208,7 @@ class App extends React.Component<any, any> {
         wordToCompare: [...this.state.wordToCompare, charObj],
         wordsW: [...this.state.wordsW, charObj],
       });
-      if (this.state.hits >= this.state.charsInWord && charObj.state === 2) {
+      if (this.state.hits + 1 >= this.state.charsInWord && charObj.state === 2) {
         this.win();
       } else {
         this.lose();
@@ -240,11 +240,7 @@ class App extends React.Component<any, any> {
   }
 
   lose() {
-    this.setState({
-      lifes: this.state.lifes - 1,
-      win: false,
-    });
-    if (this.state.lifes <= 0) {
+    if (this.state.lifes -1 <= 0) {
       document.removeEventListener("keypress", this.keyPress);
       localStorage.setItem(
         "games",
@@ -258,6 +254,8 @@ class App extends React.Component<any, any> {
       return;
     }
     this.setState({
+      lifes: this.state.lifes - 1,
+      win: false,
       wordToCompare: [],
       hits: 0,
     });
