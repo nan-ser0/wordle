@@ -20,6 +20,7 @@ class App extends React.Component<any, any> {
       wordToCompare: [],
       wordsW: [],
       time: 0,
+      maxTime: 300,
       hits: 0,
       lifes: 5,
       games: 0,
@@ -43,7 +44,6 @@ class App extends React.Component<any, any> {
   }
 
   private timer: any;
-  private maxTime: number = 300;
   private actualWord: string = "";
 
   componentDidMount() {
@@ -85,10 +85,11 @@ class App extends React.Component<any, any> {
 
   componentWillUnmount() {
     clearInterval(this.timer);
+    document.removeEventListener("keypress", this.keyPress);
   }
 
   tick() {
-    if (this.state.time >= this.maxTime) {
+    if (this.state.time >= this.state.maxTime) {
       this.play();
     }
     this.setState({
@@ -110,7 +111,6 @@ class App extends React.Component<any, any> {
     const games = localStorage.getItem("games");
     const victories = localStorage.getItem("victories");
     const usedWords = localStorage.getItem("usedwords")?.split(",");
-    console.log(usedWords);
     this.setState({
       games: games !== null ? parseInt(games) : 0,
       victories: victories !== null ? parseInt(victories) : 0,
@@ -311,6 +311,8 @@ class App extends React.Component<any, any> {
             statistics={this.state.showStatistics}
             isWin={this.state.win}
             gameOver={this.state.gameOver}
+            time={this.state.time}
+            maxTime={this.state.maxTime}
           >
             <button
               onClick={() => this.showModal(false)}
