@@ -6,11 +6,11 @@ module.exports = {
   theme: {
     extend:{
       width: {
-        'full-custom': '638px'
+        'full': '638px'
       },
       colors: {
         'gray-lighter': '#F9F9F9',
-        'gray': '#F3F3F3',
+        'gray': '#F0F0F0',
         'gray-darker': '#D3D6DA',
         'dark': '#56575E',
         'd-gray-lighter': '#565F7E',
