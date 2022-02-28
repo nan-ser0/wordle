@@ -20,11 +20,11 @@ class Header extends React.Component<any, any> {
   };
   render() {
     return (
-      <div className="Header flex items-center justify-between bg-gray w-full-custom h-[84px] rounded-2xl px-12 py-4 dark:bg-d-gray transition duration-500">
+      <div className="Header flex items-center justify-between bg-gray w-full lg:w-full-custom h-[84px] lg:rounded-2xl px-6 lg:px-12 lg:py-4 dark:bg-d-gray transition duration-500">
         <div className="Header__instructions">
           {this.props.children}
         </div>
-        <h1 className="Header__title text-5xl text-dark font-semibold dark:text-white transition duration-500">
+        <h1 className="Header__title text-3xl lg:text-5xl text-dark font-semibold dark:text-white transition duration-500">
           WORDLE
         </h1>
         <div className="Header__theme-mode">
