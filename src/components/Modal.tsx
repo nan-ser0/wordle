@@ -6,6 +6,7 @@ class Modal extends React.Component<any, any> {
     super(props);
 
     this.buildWorld = this.buildWorld.bind(this);
+    this.zeroFill = this.zeroFill.bind(this);
   }
 
   buildWorld(word: string, i: number, state: number) {
@@ -14,7 +15,7 @@ class Modal extends React.Component<any, any> {
     return arrayWord.map((char, index) => {
       if (index === i) {
         stateIndex = "!bg-state-" + state;
-      } else if (i === -1){
+      } else if (i === -1) {
         stateIndex = "bg-gray-darker";
       } else {
         stateIndex = "bg-gray";
@@ -22,10 +23,20 @@ class Modal extends React.Component<any, any> {
       return <Card key={index} classType={stateIndex} char={char} />;
     });
   }
+
+  zeroFill(number: number, width: number) {
+    const n = number.toString()
+    width -= n.length;
+    if (width > 0) {
+      return new Array(width + (/\./.test(n) ? 2 : 1)).join("0") + number;
+    }
+    return number + "";
+  }
+
   render() {
     let modal, wordIngame;
     if (this.props.gameOver && !this.props.isWin) {
-      const word = this.props.word.toString().replace(/,/g, '');
+      const word = this.props.word.toString().replace(/,/g, "");
       wordIngame = (
         <div className="Modal__statistics-word text-dark dark:text-white">
           <p className="mb-4">la palabra era:</p>
@@ -35,6 +46,9 @@ class Modal extends React.Component<any, any> {
         </div>
       );
     }
+    let secondsLeft = this.props.maxTime - this.props.time;
+    let minutes = Math.floor(secondsLeft / 60);
+    let seconds = secondsLeft % 60;
     if (this.props.statistics) {
       modal = (
         <div className="Modal__statistics flex flex-col justify-center items-center text-center">
@@ -50,7 +64,10 @@ class Modal extends React.Component<any, any> {
             </div>
             <div className="text-dark dark:text-white flex flex-col items-center">
               <div className="text-4xl extrabold">
-              <Card classType={"bg-gray-darker"} char={this.props.victories} />
+                <Card
+                  classType={"bg-gray-darker"}
+                  char={this.props.victories}
+                />
               </div>
               <p className="text-xl my-4">Victorias</p>
             </div>
@@ -58,7 +75,9 @@ class Modal extends React.Component<any, any> {
           {wordIngame}
           <div className="Modal__statistics-time text-dark dark:text-white">
             <p>siguiente palabra</p>
-            <p>04:10</p>
+            <p className="text-xl font-semibold">
+              {this.zeroFill(minutes, 2)}:{this.zeroFill(seconds, 2)}
+            </p>
           </div>
           {this.props.children}
         </div>
