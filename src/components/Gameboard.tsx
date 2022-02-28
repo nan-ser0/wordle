@@ -42,7 +42,7 @@ class Gameboard extends React.Component<any, any> {
 
   render() {
     return (
-      <div className="Gameboard h-[562px] w-full-custom flex justify-center items-center">
+      <div className="Gameboard h-[562px] w-full lg:w-full-custom flex justify-center items-center">
         <div
           className={this.state.class}
         >
